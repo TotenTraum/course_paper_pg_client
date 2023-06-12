@@ -7,16 +7,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import com.traum.client.Config
 import com.traum.client.screen_model.auth.AuthScreen
 import com.traum.client.screen_model.start_menu.StartMenuScreen
 import com.traum.client.widgets.ComboIconBox
+import com.traum.client.widgets.DialogWrap
 import com.traum.client.widgets.DropdownMenuItemWrap
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
@@ -33,6 +35,9 @@ class MainScreen : Screen {
     override fun Content() {
 
         val model = rememberScreenModel { MainScreenModel() }
+
+        if(model.settingsDialogOpen.value)
+            SettingsDialog(model)
 
         var onLogOut: (() -> Unit)? = null
         var onBack: (() -> Unit)? = null
@@ -67,7 +72,7 @@ class MainScreen : Screen {
                             )
                         }
                     ) {
-                        DropdownMenuItemWrap(onClick = {},
+                        DropdownMenuItemWrap(onClick = { model.settingsDialogOpen.value = true},
                             text = { Text("Настройки") },
                             leadingIcon = {
                                 Icon(
@@ -125,5 +130,44 @@ class MainScreen : Screen {
                 }
             }
         }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun SettingsDialog(model: MainScreenModel) {
+        var url by remember { mutableStateOf(Config.get("baseUrl")) }
+        DialogWrap(
+            onDismissRequest = { model.settingsDialogOpen.value = false },
+            buttons = {
+                Row(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    Button(onClick = {
+                        Config.set("baseUrl", url)
+                        Config.send()
+                    }) {
+                        Text("Изменить")
+                    }
+                    Spacer(Modifier.weight(1.5f))
+                    Button(
+                        onClick = { model.settingsDialogOpen.value = false }
+                    ) {
+                        Text("Отмена")
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+            },
+            title = null,
+            text = {
+                Column {
+                    Text("Строка подключения к серверу:")
+                    TextField(
+                        url,
+                        onValueChange = { url = it }
+                    )
+                }
+            }
+        )
     }
 }

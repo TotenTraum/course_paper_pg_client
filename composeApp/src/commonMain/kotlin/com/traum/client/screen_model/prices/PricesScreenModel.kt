@@ -1,8 +1,8 @@
 package com.traum.client.screen_model.prices
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
-import com.traum.client.dtos.employee.PostEmployeeDTO
 import com.traum.client.dtos.item.GetItemDTO
 import com.traum.client.dtos.price_of_item.GetPriceOfItemDTO
 import com.traum.client.dtos.price_of_item.PostPriceOfItemDTO
@@ -39,13 +39,13 @@ class PricesScreenModel : ScreenModel {
 
     private suspend fun fetchPrices(client: HttpClient) {
         items.value.forEach {
-            val response = client.get("http://localhost:8081/items/${it.id}/prices")
+            val response = client.get("${Config.get("baseUrl")}items/${it.id}/prices")
             prices.value[it.id!!] = response.body()
         }
     }
 
     private suspend fun fetchItems(client: HttpClient) {
-        val response = client.get("http://localhost:8081/items")
+        val response = client.get("${Config.get("baseUrl")}items")
         items.value = response.body()
         if (items.value.any())
             selectedItem.value = items.value.first()
@@ -78,7 +78,7 @@ class PricesAddScreenModel(val onFinish: suspend (HttpClient) -> Unit, val id: L
     fun send() = CoroutineScope(Dispatchers.Default).launch {
         val client = httpClient(token = UserToken.token)
         val dto = PostPriceOfItemDTO(price = price.value)
-        val response = client.post("http://localhost:8081/items/$id/prices") {
+        val response = client.post("${Config.get("baseUrl")}items/$id/prices") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }

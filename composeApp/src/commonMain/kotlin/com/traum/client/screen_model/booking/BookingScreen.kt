@@ -27,12 +27,13 @@ class BookingScreen : Screen {
 
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(label = { Text("Дата") },
-                    value = "",
-                    onValueChange = {},
-                    visualTransformation = MaskVisualTransformation("####-##-##")
+                OutlinedTextField(
+                    label = { Text("Дата") },
+                    value = model.dateStr.collectAsState().value,
+                    onValueChange = model::onDateChanged,
+                    visualTransformation = MaskVisualTransformation("##-##-####")
                 )
-                Button({}) {
+                Button({model.update()}, enabled = !model.errorDate.value) {
                     Text("Показать")
                 }
             }
@@ -68,7 +69,7 @@ class BookingScreen : Screen {
                         .border(1.dp, AppThemeSettings.CurrentColorScheme.background),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text("${it + 1}", color = AppThemeSettings.CurrentColorScheme.background)
+                    Text("${it}", color = AppThemeSettings.CurrentColorScheme.background)
                 }
             }
             freeTables.forEach {
@@ -163,13 +164,13 @@ class BookingScreen : Screen {
         }, title = null, text = {
             Column {
                 Text("Имя:")
-                TextField(model.data.name.collectAsState().value, onValueChange = {})
+                TextField(model.data.name.collectAsState().value, enabled = false, onValueChange = {})
                 Text("Номер телефона:")
-                TextField(model.data.phoneNumber.collectAsState().value, onValueChange = { })
+                TextField(model.data.phoneNumber.collectAsState().value, enabled = false, onValueChange = {})
                 Text("Часов:")
-                TextField(model.hour.toString(), onValueChange = { })
+                TextField(model.hour.toString(), enabled = false, onValueChange = {})
                 Text("Минут:")
-                TextField(model.minute.toString(), onValueChange = {})
+                TextField(model.minute.toString(), enabled = false, onValueChange = {})
             }
         })
     }

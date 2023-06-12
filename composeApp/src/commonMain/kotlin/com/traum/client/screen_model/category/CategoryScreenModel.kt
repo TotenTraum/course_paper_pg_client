@@ -1,6 +1,7 @@
 package com.traum.client.screen_model.category
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
 import com.traum.client.dtos.category.GetCategoryDTO
 import com.traum.client.dtos.category.PatchCategoryDTO
@@ -32,14 +33,14 @@ class CategoryScreenModel : ScreenModel {
     }
 
     private suspend fun fetchCategories(client: HttpClient) {
-        val response = client.get("http://localhost:8081/categories/all")
+        val response = client.get("${Config.get("baseUrl")}categories/all")
         categories.value = response.body()
     }
 
     fun remove(id: Long) = CoroutineScope(Dispatchers.Default).launch {
         isLoading.value = true
         val client = httpClient(token = UserToken.token)
-        client.delete("http://localhost:8081/categories/$id")
+        client.delete("${Config.get("baseUrl")}categories/$id")
         fetchCategories(client)
         isLoading.value = false
     }
@@ -66,7 +67,7 @@ class CategoryAddScreenModel(val onFinish: suspend (HttpClient) -> Unit) : Scree
     fun send() = CoroutineScope(Dispatchers.Default).launch {
         val client = httpClient(token = UserToken.token)
         val dto = PostCategoryDTO(name = name.value)
-        val response = client.post("http://localhost:8081/categories") {
+        val response = client.post("${Config.get("baseUrl")}categories") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }
@@ -90,7 +91,7 @@ class CategoryEditScreenModel(val onFinish: suspend (HttpClient) -> Unit, var id
     fun send() = CoroutineScope(Dispatchers.Default).launch {
         val client = httpClient(token = UserToken.token)
         val dto = PatchCategoryDTO(name = name.value,  isDeleted.value)
-        val response = client.patch("http://localhost:8081/categories/$id") {
+        val response = client.patch("${Config.get("baseUrl")}categories/$id") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }

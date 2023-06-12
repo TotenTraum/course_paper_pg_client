@@ -1,6 +1,7 @@
 package com.traum.client.screen_model.auth
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
 import com.traum.client.dtos.ErrorDTO
 import com.traum.client.dtos.auth.LoginDTO
@@ -26,7 +27,7 @@ class AuthScreenModel : ScreenModel {
         isCorrect.value = true
         errorText.value = ""
         try {
-            val response = httpClient().post("http://localhost:8081/login") {
+            val response = httpClient().post("${Config.get("baseUrl")}login") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     LoginDTO(

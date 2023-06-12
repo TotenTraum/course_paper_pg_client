@@ -1,6 +1,7 @@
 package com.traum.client.screen_model.measure
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
 import com.traum.client.dtos.employee.PostEmployeeDTO
 import com.traum.client.dtos.measures.GetMeasurementDTO
@@ -33,7 +34,7 @@ class MeasureScreenModel : ScreenModel {
     }
 
     private suspend fun fetchMeasures(client: HttpClient) {
-        val response = client.get("http://localhost:8081/measurements/all")
+        val response = client.get("${Config.get("baseUrl")}measurements/all")
         measures.value = response.body()
     }
 
@@ -67,7 +68,7 @@ class MeasureAddScreenModel(val onFinish: suspend (HttpClient) -> Unit) : Screen
     fun send() = CoroutineScope(Dispatchers.Default).launch {
         val client = httpClient(token = UserToken.token)
         val dto = PostMeasurementDTO(name = name.value)
-        val response = client.post("http://localhost:8081/measurements") {
+        val response = client.post("${Config.get("baseUrl")}measurements") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }
@@ -91,7 +92,7 @@ class MeasureEditScreenModel(val onFinish: suspend (HttpClient) -> Unit, var id:
     fun send() = CoroutineScope(Dispatchers.Default).launch {
         val client = httpClient(token = UserToken.token)
         val dto = PatchMeasurementDTO(name = name.value, isDeleted = isDeleted.value)
-        val response = client.patch("http://localhost:8081/measurements/$id") {
+        val response = client.patch("${Config.get("baseUrl")}measurements/$id") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }

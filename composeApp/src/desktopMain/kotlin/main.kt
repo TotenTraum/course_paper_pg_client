@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.traum.client.App
+import com.traum.client.Config
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Regular
 import compose.icons.fontawesomeicons.regular.WindowClose
@@ -26,6 +27,8 @@ import compose.icons.fontawesomeicons.regular.WindowMinimize
 import compose.icons.fontawesomeicons.regular.WindowRestore
 
 fun main() = application {
+    Config
+
     val windowState = rememberWindowState(
         width = Dp.Unspecified,
         height = Dp.Unspecified,
@@ -51,7 +54,7 @@ fun main() = application {
                     else
                         windowState.placement = WindowPlacement.Floating
                 },
-                onHide = { })
+                onHide = { isVisible = false })
         }
     }
 }

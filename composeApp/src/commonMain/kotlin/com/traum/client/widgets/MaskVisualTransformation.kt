@@ -4,6 +4,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import kotlinx.datetime.LocalDate
 import kotlin.math.absoluteValue
 
 class MaskVisualTransformation(private val mask: String) : VisualTransformation {
@@ -41,3 +42,11 @@ class MaskVisualTransformation(private val mask: String) : VisualTransformation 
         }
     }
 }
+
+fun toLocalDate(date: String): LocalDate {
+    val day = date.slice(0..1)
+    val month = date.slice(2..3)
+    val year = date.slice(4..7)
+    return LocalDate.parse("$year-$month-$day")
+}
+

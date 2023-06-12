@@ -1,6 +1,7 @@
 package com.traum.client.screen_model.measuresOfitem
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
 import com.traum.client.dtos.item.GetItemDTO
 import com.traum.client.dtos.measure_of_item.GetMeasureOfItemDTO
@@ -12,6 +13,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.serialization.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,19 +45,19 @@ class MeasuresOfItemScreenModel : ScreenModel {
 
     private suspend fun fetchMeasuresOfItem(client: HttpClient) {
         items.value.forEach {
-            val response = client.get("http://localhost:8081/items/${it.id}/measures")
+            val response = client.get("${Config.get("baseUrl")}items/${it.id}/measures")
             measuresOfItem.value[it.id!!] = response.body()
         }
     }
 
     private suspend fun fetchItems(client: HttpClient) {
-        val response = client.get("http://localhost:8081/items")
+        val response = client.get("${Config.get("baseUrl")}items")
         items.value = response.body()
         if (items.value.any()) selectedItem.value = items.value.first()
     }
 
     private suspend fun fetchMeasures(client: HttpClient) {
-        val response = client.get("http://localhost:8081/measurements/all")
+        val response = client.get("${Config.get("baseUrl")}measurements/all")
         measures.value = response.body()
     }
 
@@ -63,7 +65,7 @@ class MeasuresOfItemScreenModel : ScreenModel {
         if (selectedItem.value != null) {
             isLoading.value = true
             val client = httpClient(token = UserToken.token)
-            client.delete("http://localhost:8081/items/${selectedItem.value?.id}/measures")
+            client.delete("${Config.get("baseUrl")}items/${selectedItem.value?.id}/measures")
             fetchMeasures(client)
             isLoading.value = false
         }
@@ -102,7 +104,7 @@ class MeasuresOfItemAddScreenModel(
                 measurementId = selectedMeasure.value?.id!!,
                 amount = amount.value
             )
-            val response = client.post("http://localhost:8081/items/$selectedItem/measures") {
+            val response = client.post("${Config.get("baseUrl")}items/$selectedItem/measures") {
                 contentType(ContentType.Application.Json)
                 setBody(dto)
             }
@@ -145,7 +147,7 @@ class MeasuresOfItemEditScreenModel(
         if (selectedMeasure.value != null) {
             val client = httpClient(token = UserToken.token)
             val dto = PatchMeasureOfItemDTO(amount = amount.value, measurementId = selectedMeasure.value!!.id)
-            val response = client.patch("http://localhost:8081/items/$itemId/measures/$id") {
+            val response = client.patch("${Config.get("baseUrl")}items/$itemId/measures/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(dto)
             }

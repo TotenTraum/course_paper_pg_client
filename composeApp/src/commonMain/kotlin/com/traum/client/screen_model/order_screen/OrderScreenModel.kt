@@ -1,6 +1,7 @@
 package com.traum.client.screen_model.order_screen
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
 import com.traum.client.dtos.category.GetCategoryDTO
 import com.traum.client.dtos.employee.GetEmployeeDTO
@@ -94,7 +95,7 @@ class OrderScreenModel() : ScreenModel {
     }
 
     private suspend fun downloadCategories(client: HttpClient) {
-        val response = client.get("http://localhost:8081/categories")
+        val response = client.get("${Config.get("baseUrl")}categories")
         responseHandler(response) {
             categories.value = response.body()
             if (categories.value.any())
@@ -103,7 +104,7 @@ class OrderScreenModel() : ScreenModel {
     }
 
     private suspend fun downloadItems(client: HttpClient) {
-        val response = client.get("http://localhost:8081/items/priced")
+        val response = client.get("${Config.get("baseUrl")}items/priced")
         responseHandler(response) {
             items.value =
                 response.body<List<GetItemDTO>>().map {
@@ -121,7 +122,7 @@ class OrderScreenModel() : ScreenModel {
 
     private suspend fun downloadPrices(client: HttpClient) {
         items.value.forEach {
-            val response = client.get("http://localhost:8081/items/${it.id}/prices/latest")
+            val response = client.get("${Config.get("baseUrl")}items/${it.id}/prices/latest")
             responseHandler(response) {
                 val priceDTO = response.body<GetPriceOfItemDTO>()
                 val priceOfItem = PriceOfItem()
@@ -135,7 +136,7 @@ class OrderScreenModel() : ScreenModel {
 
     private suspend fun downloadMeasuresOfItem(client: HttpClient) {
         items.value.forEach {
-            val response = client.get("http://localhost:8081/items/${it.id}/measures")
+            val response = client.get("${Config.get("baseUrl")}items/${it.id}/measures")
             responseHandler(response) {
                 val measure = response.body<List<GetMeasureOfItemDTO>>().map {
                     val measureOfItem = MeasureOfItem()
@@ -150,14 +151,14 @@ class OrderScreenModel() : ScreenModel {
     }
 
     private suspend fun downloadMeasures(client: HttpClient) {
-        val response = client.get("http://localhost:8081/measurements")
+        val response = client.get("${Config.get("baseUrl")}measurements")
         responseHandler(response) {
             measures.value = response.body<List<GetMeasurementDTO>>()
         }
     }
 
     private suspend fun downloadTables(client: HttpClient) {
-        val response = client.get("http://localhost:8081/tables")
+        val response = client.get("${Config.get("baseUrl")}tables")
         responseHandler(response) {
             tables.value = response.body<List<GetTableDTO>>().map {
                 val table = Table()
@@ -169,7 +170,7 @@ class OrderScreenModel() : ScreenModel {
     }
 
     private suspend fun downloadEmployees(client: HttpClient) {
-        val response = client.get("http://localhost:8081/employees")
+        val response = client.get("${Config.get("baseUrl")}employees")
         responseHandler(response) {
             employees.value = response.body<List<GetEmployeeDTO>>().map {
                 val employee = Employee()
@@ -205,7 +206,7 @@ class OrderScreenModel() : ScreenModel {
         }
 
     private suspend fun createOrder(client: HttpClient, onError: ((String) -> Unit)? = null) {
-        val response = client.post("http://localhost:8081/orders") {
+        val response = client.post("${Config.get("baseUrl")}orders") {
             contentType(ContentType.Application.Json)
             setBody(PostOrderDTO(selectedTable.value?.id!!, selectedEmployee.value?.id!!))
         }
@@ -219,7 +220,7 @@ class OrderScreenModel() : ScreenModel {
     }
 
     private suspend fun sendElements(client: HttpClient, onSuccess: () -> Unit, onError: ((String) -> Unit)? = null) {
-        val response = client.post("http://localhost:8081/orders/${sendState.orderID}/elements/list") {
+        val response = client.post("${Config.get("baseUrl")}orders/${sendState.orderID}/elements/list") {
             contentType(ContentType.Application.Json)
             setBody(itemsInCart.value.map {
                 PostElementOfOrderWithPriceDTO(

@@ -36,18 +36,22 @@ class StartMenuScreen : Screen {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(modifier = buttonModifier, onClick = { navigator.push(OrderScreen()) }) {
-                    Text("Новый заказ", fontSize = fontSize)
+                if(model.isEmployee.collectAsState().value){
+                    Button(modifier = buttonModifier, onClick = { navigator.push(OrderScreen()) }) {
+                        Text("Новый заказ", fontSize = fontSize)
+                    }
+                    Spacer(Modifier.requiredHeight(24.dp))
+                    Button(modifier = buttonModifier, onClick = { navigator.push(BookingScreen()) }) {
+                        Text("Забронировать", fontSize = fontSize)
+                    }
+                    Spacer(Modifier.requiredHeight(24.dp))
                 }
-                Spacer(Modifier.requiredHeight(24.dp))
-                Button(modifier = buttonModifier, onClick = {navigator.push(BookingScreen())}) {
-                    Text("Забронировать", fontSize = fontSize)
+                if(model.isAnalytic.collectAsState().value) {
+                    Button(modifier = buttonModifier, onClick = { navigator.push(AnalyticPanelScreen()) }) {
+                        Text("Аналитика", fontSize = fontSize)
+                    }
+                    Spacer(Modifier.requiredHeight(24.dp))
                 }
-                Spacer(Modifier.requiredHeight(24.dp))
-                Button(modifier = buttonModifier, onClick = { navigator.push(AnalyticPanelScreen()) }) {
-                    Text("Аналитика", fontSize = fontSize)
-                }
-                Spacer(Modifier.requiredHeight(24.dp))
                 if (model.isAdmin.collectAsState().value)
                     Button(modifier = buttonModifier, onClick = { navigator.push(AdminPanelScreen()) }) {
                         Text("Админ-панель", fontSize = fontSize)

@@ -96,7 +96,7 @@ class ItemScreen : Screen {
                         .border(1.dp, AppThemeSettings.CurrentColorScheme.background),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    IconButton({}) {
+                    IconButton({model.openAddDialog()}) {
                         Icon(
                             modifier = Modifier.width(12.dp),
                             imageVector = FontAwesomeIcons.Solid.Plus,

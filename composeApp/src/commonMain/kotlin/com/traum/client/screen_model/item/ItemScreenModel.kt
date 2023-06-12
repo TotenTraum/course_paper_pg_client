@@ -1,6 +1,7 @@
 package com.traum.client.screen_model.item
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
 import com.traum.client.dtos.category.GetCategoryDTO
 import com.traum.client.dtos.item.GetItemDTO
@@ -39,12 +40,12 @@ class ItemScreenModel : ScreenModel {
     }
 
     private suspend fun fetchItems(client: HttpClient) {
-        val response = client.get("http://localhost:8081/items")
+        val response = client.get("${Config.get("baseUrl")}items")
         items.value = response.body<List<GetItemDTO>>().groupBy { it.categoryId }.toMutableMap()
     }
 
     private suspend fun fetchCategories(client: HttpClient) {
-        val response = client.get("http://localhost:8081/categories/all")
+        val response = client.get("${Config.get("baseUrl")}categories/all")
         categories.value = response.body()
         if (categories.value.any())
             selectedCategory.value = categories.value.first()
@@ -53,7 +54,7 @@ class ItemScreenModel : ScreenModel {
     fun remove(id: Long) = CoroutineScope(Dispatchers.Default).launch {
         isLoading.value = true
         val client = httpClient(token = UserToken.token)
-        client.delete("http://localhost:8081/items/$id")
+        client.delete("${Config.get("baseUrl")}items/$id")
         fetchItems(client)
         isLoading.value = false
     }
@@ -87,7 +88,7 @@ class ItemAddScreenModel(val onFinish: suspend (HttpClient) -> Unit, val selecte
             isNotForSale = isNotForSale.value,
             categoryId = selectedCategory
         )
-        val response = client.post("http://localhost:8081/items") {
+        val response = client.post("${Config.get("baseUrl")}items") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }
@@ -113,7 +114,7 @@ class ItemEditScreenModel(val onFinish: suspend (HttpClient) -> Unit, var id: Lo
     fun send() = CoroutineScope(Dispatchers.Default).launch {
         val client = httpClient(token = UserToken.token)
         val dto = PatchItemDTO(name = name.value, description = description.value, isNotForSale = isNotForSale.value)
-        val response = client.patch("http://localhost:8081/items/$id") {
+        val response = client.patch("${Config.get("baseUrl")}items/$id") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }

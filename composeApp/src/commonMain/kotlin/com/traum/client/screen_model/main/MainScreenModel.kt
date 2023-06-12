@@ -5,4 +5,5 @@ import cafe.adriel.voyager.core.model.ScreenModel
 
 class MainScreenModel : ScreenModel {
     var settingsExpanded = mutableStateOf(false)
+    var settingsDialogOpen = mutableStateOf(false)
 }

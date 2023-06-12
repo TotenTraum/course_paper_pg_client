@@ -1,6 +1,7 @@
 package com.traum.client.screen_model.logs
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
 import com.traum.client.dtos.log.GetLogDTO
 import com.traum.client.httpClient
@@ -15,7 +16,7 @@ class LogsScreenModel : ScreenModel {
     init {
         CoroutineScope(Dispatchers.Default).launch {
             val client = httpClient(token = UserToken.token)
-            val response = client.get("http://localhost:8081/logs")
+            val response = client.get("${Config.get("baseUrl")}logs")
             logs.value = response.body()
             isLoading.value = false
         }

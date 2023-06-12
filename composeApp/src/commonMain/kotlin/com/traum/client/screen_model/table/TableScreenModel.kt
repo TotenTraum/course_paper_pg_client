@@ -1,6 +1,7 @@
 package com.traum.client.screen_model.table
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.traum.client.Config
 import com.traum.client.UserToken
 import com.traum.client.dtos.table.GetTableDTO
 import com.traum.client.dtos.table.PatchTableDTO
@@ -32,14 +33,14 @@ class TableScreenModel : ScreenModel {
     }
 
     private suspend fun fetchTables(client: HttpClient) {
-        val response = client.get("http://localhost:8081/tables/all")
+        val response = client.get("${Config.get("baseUrl")}tables/all")
         tables.value = response.body()
     }
 
     fun remove(id: Long) = CoroutineScope(Dispatchers.Default).launch {
         isLoading.value = true
         val client = httpClient(token = UserToken.token)
-        client.delete("http://localhost:8081/tables/$id")
+        client.delete("${Config.get("baseUrl")}tables/$id")
         fetchTables(client)
         isLoading.value = false
     }
@@ -74,7 +75,7 @@ class TableAddScreenModel(val onFinish: suspend (HttpClient) -> Unit) : ScreenMo
     fun send() = CoroutineScope(Dispatchers.Default).launch {
         val client = httpClient(token = UserToken.token)
         val dto = PostTableDTO(tableNumber = tableNumber.value)
-        val response = client.post("http://localhost:8081/tables") {
+        val response = client.post("${Config.get("baseUrl")}tables") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }
@@ -107,7 +108,7 @@ class TableEditScreenModel(val onFinish: suspend (HttpClient) -> Unit, var id: L
     fun send() = CoroutineScope(Dispatchers.Default).launch {
         val client = httpClient(token = UserToken.token)
         val dto = PatchTableDTO(tableNumber = tableNumber.value, isDeleted.value)
-        val response = client.patch("http://localhost:8081/tables/$id") {
+        val response = client.patch("${Config.get("baseUrl")}tables/$id") {
             contentType(ContentType.Application.Json)
             setBody(dto)
         }

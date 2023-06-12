@@ -13,8 +13,8 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.traum.client.screen_model.admin_panel.AdminPanelScreenModel
-import com.traum.client.screen_model.logs.LogsScreen
-import com.traum.client.screen_model.table.TableScreen
+import com.traum.client.screen_model.analytic_panel.report.items_report.ItemsReportScreen
+import com.traum.client.screen_model.analytic_panel.report.stonks_report.StonksReportScreen
 import com.traum.client.widgets.ErrorMessage
 import com.traum.client.widgets.Loading
 
@@ -35,17 +35,13 @@ class AnalyticPanelScreen : Screen {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(modifier = buttonModifier, onClick = { navigator.push(LogsScreen()) }) {
+                Button(modifier = buttonModifier, onClick = { navigator.push(ItemsReportScreen()) }) {
                     Text("Отчёт по продажам товаров", fontSize = fontSize)
                 }
                 Spacer(Modifier.requiredHeight(24.dp))
-                Button(modifier = buttonModifier, onClick = { navigator.push(TableScreen()) }) {
+                Button(modifier = buttonModifier, onClick = { navigator.push(StonksReportScreen()) }) {
                     Text("Отчёт по выручке", fontSize = fontSize)
                 }
-//                Spacer(Modifier.requiredHeight(24.dp))
-//                Button(modifier = buttonModifier, onClick = { navigator.push(TableScreen()) }) {
-//                    Text("Редактор сотрудников", fontSize = fontSize)
-//                }
             }
     }
 }

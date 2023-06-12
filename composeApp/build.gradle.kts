@@ -88,6 +88,8 @@ kotlin {
                 implementation(compose.desktop.common)
                 implementation(compose.desktop.currentOs)
                 implementation(libs.ktor.client.okhttp)
+                implementation("io.ktor:ktor-client-cio:2.3.0")
+
             }
         }
 
@@ -170,7 +172,7 @@ libres {
 //tasks.getByPath("desktopSourcesJar").dependsOn("libresGenerateResources")
 //tasks.getByPath("jsProcessResources").dependsOn("libresGenerateResources")
 dependencies {
-//    implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
+    //    implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
 //    debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
 }
 

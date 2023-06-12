@@ -1,22 +1,27 @@
 package com.traum.client
 
-import io.ktor.client.HttpClient
-import io.ktor.client.HttpClientConfig
-import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.plugins.auth.providers.bearer
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.plugins.auth.providers.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
-actual fun httpClient(config: HttpClientConfig<*>.() -> Unit, token: String?) = HttpClient(OkHttp) {
+@OptIn(ExperimentalSerializationApi::class)
+actual fun httpClient(config: HttpClientConfig<*>.() -> Unit, token: String?) = HttpClient(CIO) {
     install(ContentNegotiation) {
-        json(Json)
+        json(Json {
+            isLenient = true
+            ignoreUnknownKeys = true
+            explicitNulls = false
+        })
     }
 
-    if(token != null){
-        install(Auth){
+    if (token != null) {
+        install(Auth) {
             bearer {
                 loadTokens {
                     BearerTokens(token, "")
